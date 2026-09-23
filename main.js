@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 // ---------- Three.js Setup ----------
 const myCanvas = document.querySelector("#my-canvas");
@@ -187,6 +188,30 @@ for (let i = 0; i < 8; i++) {
 
   plant.add(leaf);
 }
+
+// ================= Second Plant (External Model) =================
+
+const gltfLoader = new GLTFLoader();
+
+let modelPlant = null;
+// i downloaded this from here https://poly.pizza/m/wPqra4eWSX
+gltfLoader.load("models/plant-model.glb", function (gltf) {
+  modelPlant = gltf.scene;
+
+  // Scale the model so it is about 1 unit tall, whatever its original size
+  const box = new THREE.Box3().setFromObject(modelPlant);
+  const size = box.getSize(new THREE.Vector3());
+  const scale = 1 / size.y;
+  modelPlant.scale.set(scale, scale, scale);
+
+  // Put the bottom of the model on y = 0, next to the first plant
+  box.setFromObject(modelPlant);
+  modelPlant.position.set(3, -box.min.y, -1);
+
+  scene.add(modelPlant);
+}, undefined, function (error) {
+  console.error(error);
+});
 
 // ================= Window =================
 

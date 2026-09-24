@@ -1,12 +1,6 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
-// =====================================================================
-// Indoor Plant Corner — CSE444 Final Project (Project 22)
-// Controls:  N = day/night | C or Click plant = change color
-//            ← → = rotate plant | + / - = zoom (FOV)
-// =====================================================================
-
 // ---------- Renderer / Scene / Camera ----------
 const myCanvas = document.querySelector("#my-canvas");
 
@@ -18,7 +12,7 @@ renderer.shadowMap.type = THREE.PCFShadowMap;
 
 const scene = new THREE.Scene();
 
-// Perspective projection: 60° field of view, near 0.1, far 100
+// Camera
 const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
 camera.position.set(0, 2, 5);
 camera.lookAt(0, 1, 0);
@@ -27,20 +21,20 @@ camera.lookAt(0, 1, 0);
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
 
-// Sunlight coming through the window (moves → light direction changes)
+// Sunlight
 const sunLight = new THREE.DirectionalLight(0xfff2d6, 1.5);
 sunLight.position.set(3, 5, -3);
 sunLight.castShadow = true;
 sunLight.shadow.mapSize.set(1024, 1024);
 scene.add(sunLight);
 
-// Warm lamp used at night
+// Warm lamp
 const lampLight = new THREE.PointLight(0xffaa55, 0, 10);
 lampLight.position.set(-1.6, 3.4, -0.6);
 lampLight.castShadow = true;
 scene.add(lampLight);
 
-// Small glowing bulb so the lamp is visible
+// Small bulb
 const bulb = new THREE.Mesh(
   new THREE.SphereGeometry(0.12, 16, 16),
   new THREE.MeshBasicMaterial({ color: 0x555555 })
@@ -48,7 +42,7 @@ const bulb = new THREE.Mesh(
 bulb.position.copy(lampLight.position);
 scene.add(bulb);
 
-// Cord from the ceiling to the bulb
+// Cord
 const cord = new THREE.Mesh(
   new THREE.CylinderGeometry(0.01, 0.01, 1.6),
   new THREE.MeshBasicMaterial({ color: 0x222222 })
@@ -75,7 +69,6 @@ const wallTexturePlain = loadTexture("textures/wall-plain.jpg");
 const wallTextureBricks = loadTexture("textures/wall-bricks.jpg");
 
 // ================= Room =================
-// A box seen from inside (BackSide). Floor is at y = 0, back wall at z = -2.
 const wallMat = (map) => new THREE.MeshStandardMaterial({ map, side: THREE.BackSide });
 
 const room = new THREE.Mesh(new THREE.BoxGeometry(8, 5, 8), [
@@ -90,8 +83,8 @@ room.position.set(0, 2.5, 2);
 room.receiveShadow = true;
 scene.add(room);
 
-// ================= Plant 1 (built with three.js geometry) =================
-const plant = new THREE.Group(); // Pot + leaves together
+// ================= Plant 1  =================
+const plant = new THREE.Group();
 plant.position.set(0, 0, 0);
 plant.scale.set(0.7, 0.7, 0.7);
 scene.add(plant);
@@ -174,13 +167,13 @@ const leafMaterial = new THREE.ShaderMaterial({
 // A sphere squeezed flat = a leaf shape
 const leafGeometry = new THREE.SphereGeometry(1, 16, 16);
 leafGeometry.scale(0.22, 0.8, 0.04);
-leafGeometry.translate(0, 0.8, 0); // Bottom of leaf at y = 0
+leafGeometry.translate(0, 0.8, 0);
 
 for (let i = 0; i < 8; i++) {
   const leaf = new THREE.Mesh(leafGeometry, leafMaterial);
-  leaf.position.y = 0.85;                  // On top of the pot
-  leaf.rotation.y = i * ((Math.PI * 2) / 8); // Spread in a circle
-  leaf.rotation.z = 0.7;                   // Tilt outward
+  leaf.position.y = 0.85;               
+  leaf.rotation.y = i * ((Math.PI * 2) / 8); 
+  leaf.rotation.z = 0.7;
   leaf.castShadow = true;
   plant.add(leaf);
 }
@@ -194,7 +187,7 @@ let modelPlant = null;
 gltfLoader.load("models/plant-model.glb", (gltf) => {
   modelPlant = gltf.scene;
 
-  // Scale to ~1.3 units tall and place on the floor
+  // Scale to 1.3 units
   const box = new THREE.Box3().setFromObject(modelPlant);
   const scale = 1.3 / box.getSize(new THREE.Vector3()).y;
   modelPlant.scale.setScalar(scale);
@@ -207,8 +200,8 @@ gltfLoader.load("models/plant-model.glb", (gltf) => {
     child.castShadow = true;
     const mats = Array.isArray(child.material) ? child.material : [child.material];
     mats.forEach((m) => {
-      if (m.name === "Plant.001") m.map = potTexture;             // pot
-      if (m.name === "Plant.002") m.map = woodTexture;            // soil/stem
+      if (m.name === "Plant.001") m.map = potTexture;            
+      if (m.name === "Plant.002") m.map = woodTexture;     
       if (m.name === "Plant.003") { m.map = leafTexture; modelLeafMaterial = m; } // leaves
       if (m !== modelLeafMaterial) m.color.lerp(new THREE.Color(0xffffff), 0.6); // lighten so texture shows
       m.metalness = 0.1;
@@ -293,12 +286,12 @@ makeBar(1.8, 0.1, 0, -0.85);  // Bottom
 makeBar(0.1, 1.8, -0.85, 0);  // Left
 makeBar(0.1, 1.8, 0.85, 0);   // Right
 makeBar(1.7, 0.06, 0, 0);     // Middle horizontal
-makeBar(0.06, 1.7, 0, 0);     // Middle vertical
+makeBar(0.1, 1.7, 0, 0);     // Middle vertical
 makeBar(2.0, 0.12, 0, -0.95); // Window sill
 
 // ================= Day / Night (Keyboard: N) =================
 let isNight = false;
-let nightAmount = 0; // 0..1, animated smoothly toward the target
+let nightAmount = 0; //
 
 const dayBg = new THREE.Color(0xcfe8ff);
 const nightBg = new THREE.Color(0x0b1026);
@@ -339,7 +332,6 @@ function isPlantObject(obj) {
 }
 
 myCanvas.addEventListener("click", (event) => {
-  // Convert pixel position to normalized device coordinates (-1..1)
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
   raycaster.setFromCamera(mouse, camera);
@@ -348,14 +340,6 @@ myCanvas.addEventListener("click", (event) => {
   if (hits.length > 0 && isPlantObject(hits[0].object)) changePlantColor();
 });
 
-// Pointer cursor when hovering a plant
-myCanvas.addEventListener("mousemove", (event) => {
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-  raycaster.setFromCamera(mouse, camera);
-  const hits = raycaster.intersectObjects(scene.children, true);
-  myCanvas.style.cursor = hits.length > 0 && isPlantObject(hits[0].object) ? "pointer" : "default";
-});
 
 // ---------- Keyboard ----------
 document.addEventListener("keydown", (event) => {

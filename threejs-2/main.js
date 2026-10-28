@@ -116,7 +116,6 @@ const leafVertexShader = `
     v_normal = normalize(mat3(modelMatrix) * normal);
 
     vec3 pos = position;
-    // Sway: top of the leaf moves more, bottom stays still
     pos.x += sin(u_time) * 0.1 * position.y;
     pos.z += cos(u_time * 0.7) * 0.05 * position.y;
 

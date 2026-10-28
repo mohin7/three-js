@@ -1,23 +1,76 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Indoor Plant Corner</title>
-    <link rel="stylesheet" href="style.css">
-</head>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪴</text></svg>" />
+  </head>
+  <body>
+    <canvas id="scene"></canvas>
 
-<body>
-    <canvas id="my-canvas"></canvas>
-    <div id="help">
-        <h1>Indoor Plant Corner</h1>
-        <p><b>N</b> Toggle day / night</p>
-        <p><b>Click plant</b> or <b>C</b> Change plant color</p>
-        <p><b>← →</b> Rotate plant</p>
-        <p><b>+ / −</b> Zoom in / out</p>
-    </div>
-    <script type="module" src="/main.js"></script>
-</body>
+    <header class="panel" id="title">
+      <h1>Indoor Plant Corner</h1>
+      <p>CSE444 · Computer Graphics &amp; Animation Lab</p>
+      <div class="stats">
+        <span>🕒 <b id="clock">--:--</b> <em id="phase"></em></span>
+        <span>🍃 Wind <b id="wind">1.00</b></span>
+        <span>💡 Lamp <b id="lamp">On</b></span>
+        <span>🧭 <b id="sun-info"></b></span>
+        <button id="daynight" class="chip">🌙 Night</button>
+      </div>
+      <nav id="plant-list"></nav>
+    </header>
 
+    <section class="panel" id="plant-card">
+      <h2 id="plant-name"></h2>
+      <p class="species" id="plant-species"></p>
+      <p class="info" id="plant-info"></p>
+      <label>Health <span id="health-val"></span></label>
+      <div class="bar"><div id="health-bar"></div></div>
+      <label>Growth <span id="growth-val"></span></label>
+      <div class="bar"><div id="growth-bar" class="growth"></div></div>
+      <label>Leaf colour <span id="color-name"></span></label>
+      <div id="swatches"></div>
+      <p class="hint"><kbd>W</kbd> water · <kbd>F</kbd> fertilize · <kbd>P</kbd> colour</p>
+    </section>
+
+    <section class="panel" id="help">
+      <h3>Controls <small>(H to hide)</small></h3>
+      <div class="cols">
+        <div>
+          <h4>Mouse</h4>
+          <ul>
+            <li>Drag — orbit camera</li>
+            <li>Right-drag — pan</li>
+            <li>Wheel — zoom</li>
+            <li>Hover — highlight plant</li>
+            <li>Click plant — select</li>
+            <li>Double-click plant — water</li>
+            <li>Click lamp — toggle light</li>
+            <li>Click can — water selected</li>
+            <li>Click swatch — change colour</li>
+            <li>Day/Night button — toggle</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Keyboard</h4>
+          <ul>
+            <li><kbd>1</kbd>–<kbd>5</kbd> / <kbd>Tab</kbd> select plant</li>
+            <li><kbd>W</kbd> water · <kbd>F</kbd> fertilize · <kbd>D</kbd> dry out</li>
+            <li><kbd>L</kbd> lamp · <kbd>G</kbd> glow light</li>
+            <li><kbd>N</kbd> toggle day/night · <kbd>T</kbd> freeze time</li>
+            <li><kbd>P</kbd> plant colour · <kbd>Shift</kbd>+<kbd>P</kbd> all plants</li>
+            <li><kbd>[</kbd> <kbd>]</kbd> scrub time of day</li>
+            <li><kbd>↑</kbd> <kbd>↓</kbd> wind strength</li>
+            <li><kbd>←</kbd> <kbd>→</kbd> orbit · <kbd>+</kbd> <kbd>−</kbd> zoom</li>
+            <li><kbd>C</kbd> reset camera · <kbd>Space</kbd> pause</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div id="toast"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
 </html>

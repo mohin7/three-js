@@ -1,16 +1,14 @@
 {
-  "name": "threejs",
+  "name": "indoor-plant-corner",
+  "private": true,
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "CSE444 Computer Graphics & Animation Lab final project - an interactive indoor plant corner built with Three.js and custom GLSL shaders.",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx vite"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
     "three": "^0.186.0"
   },
